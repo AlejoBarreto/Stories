@@ -18,39 +18,39 @@ export class AppComponent implements OnInit {
 
   filterControl = new FormControl('');
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
     this.stories = this.storiesService.getStories('priority', 200).subscribe({
       next: this.handleGetStoriesSuccess.bind(this),
       error: this.handleGetStoriesError.bind(this)
     });
 
-    this.filterControl.valueChanges.subscribe(value => 
-      {
-        this.gridApi.setGridOption("quickFilterText", value?.toString());
-      }
+    this.filterControl.valueChanges.subscribe(value => {
+      this.gridApi.setGridOption("quickFilterText", value?.toString());
+    }
     );
   }
 
-  handleGetStoriesSuccess(data: any){
+  handleGetStoriesSuccess(data: any) {
     this.gridData = data;
   }
 
-  handleGetStoriesError(data: any){
+  handleGetStoriesError(data: any) {
     console.log('error');
   }
 
   // Column Definitions: Defines & controls grid columns.
   colDefs: ColDef[] = [
-    { field: 'title',
-      cellRenderer: function(params: ICellRendererParams ) {
+    {
+      field: 'title',
+      cellRenderer: function (params: ICellRendererParams) {
         if (params.data.url)
-              return `<a href="${params.data.url}" target="_blank">`+ params.data.title+'</a>';
+          return `<a href="${params.data.url}" target="_blank">` + params.data.title + '</a>';
         else
           return params.data.title;
+      }
     }
-  }
   ];
-  
+
   defaultColDef: ColDef = {
     flex: 1,
   }

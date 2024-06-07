@@ -40,7 +40,7 @@ public class StoryController : ControllerBase
         var response = await _storyService.GetStoryDetailsAsync(id);
 
         if (response == null)
-            return NotFound($"Story with ID: {id} not found.");
+            return NotFound($"Story with Id: {id} not found.");
 
         return Ok(response);
     }

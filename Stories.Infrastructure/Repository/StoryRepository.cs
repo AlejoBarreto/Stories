@@ -1,16 +1,15 @@
-﻿using System.Net.Http.Json;
-using Stories.Common.Models;
+﻿using Stories.Common.Models;
 using Stories.SharedKernel.Interfaces;
 
 namespace Stories.Infrastructure.Repository;
 
 public class StoryRepository : IStoryRepository
 {
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IHnClient _hnClient;
     public const string ClientName = "StoriesApiClient";
-    public StoryRepository(IHttpClientFactory httpClientFactory)
+    public StoryRepository(IHnClient hnClient)
     {
-        _httpClientFactory = httpClientFactory;
+        _hnClient = hnClient;
     }
 
     public async Task<List<GetStoryDetailsResponse?>> GetStoriesAsync(GetStoriesRequest request)
@@ -19,25 +18,11 @@ public class StoryRepository : IStoryRepository
 
         try
         {
-            var client = _httpClientFactory.CreateClient(ClientName);
-
-            var response = await client.GetAsync(
-                $"newstories.json?print=pretty&orderBy=\"${request.OrderBy}\"&limitToFirst={request.Limit}");
-
-            var storiesIds = await response.Content.ReadFromJsonAsync<List<int>>();
+            var storiesIds = await _hnClient.GetNewestStoriesAsync(request);
 
             if (storiesIds != null)
             {
-                var tasks = storiesIds.Select(async storyId =>
-                {
-                    var detailResponse = await client.GetAsync($"item/{storyId}.json?print=pretty");
-                    var detail = await detailResponse.Content.ReadFromJsonAsync<GetStoryDetailsResponse>();
-                    return detail;
-                });
-
-                var details = await Task.WhenAll(tasks);
-
-                stories.AddRange(details.Where(detail => detail != null));
+                stories = await _hnClient.GetNewestStoriesDetailsAsync(storiesIds);
             }
         }
         catch (Exception ex)
@@ -53,11 +38,7 @@ public class StoryRepository : IStoryRepository
         GetStoryDetailsResponse? storyDetails = null;
         try
         {
-            var client = _httpClientFactory.CreateClient(ClientName);
-
-            var response = await client.GetAsync($"item/{id}.json?print=pretty");
-
-            storyDetails = await response.Content.ReadFromJsonAsync<GetStoryDetailsResponse>();
+            storyDetails = await _hnClient.GetStoryDetailsByIdAsync(id);
         }
         catch (Exception ex)
         {

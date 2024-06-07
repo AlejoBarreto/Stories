@@ -24,7 +24,7 @@ public class StoryService : IStoryService
             return categories;
         });
 
-        return categories;
+        return categories!;
     }
 
     public async Task<GetStoryDetailsResponse?> GetStoryDetailsAsync(int id)

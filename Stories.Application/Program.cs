@@ -1,5 +1,6 @@
 using Stories.Common.Models;
 using Stories.Core.Services;
+using Stories.Infrastructure.Client;
 using Stories.Infrastructure.Repository;
 using Stories.SharedKernel.Interfaces;
 
@@ -15,11 +16,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IStoryService, StoryService>();
 builder.Services.AddTransient<IStoryRepository, StoryRepository>();
 
+builder.Services.AddSingleton<IHnClient, HnClient>();
+
 builder.Services.AddMemoryCache();
 
 var configSettings = builder.Configuration.GetSection(StoriesSettings.OptionKey).Get<StoriesSettings>();
 
-builder.Services.AddHttpClient(StoryRepository.ClientName, httpClient =>
+builder.Services.AddHttpClient(HnClient.ClientName, httpClient =>
 {
     httpClient.BaseAddress = new Uri(configSettings!.BaseUrl);
 });

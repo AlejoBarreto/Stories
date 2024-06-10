@@ -2,19 +2,5 @@
   <span>Stories App</span>
 </div>
 <div class="content">
-  <div class="search">
-    <form class="example-form">
-      <mat-form-field class="example-full-width" appearance="outline">
-        <mat-label>Filter</mat-label>
-        <input matInput [formControl]="filterControl" type="text"/>
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
-    </form>
-  </div>
-  <ag-grid-angular style="height: 500px; width: 1000px" class="ag-theme-alpine" [rowData]="gridData"
-    [columnDefs]="colDefs" [defaultColDef]="defaultColDef" [pagination]="true" [paginationPageSize]="10"
-    [paginationPageSizeSelector]="[10, 20, 50]" (gridReady)="onGridReady($event)">
-  </ag-grid-angular>
-
+<app-grid [gridData]="gridData"></app-grid>
 </div>
-<router-outlet></router-outlet>
